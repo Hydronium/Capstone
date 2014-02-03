@@ -771,6 +771,24 @@ void LCD_DisplayStringLine(uint16_t Line, uint8_t *ptr)
   }
 }
 
+void LCD_DisplayStringLineColumn(uint16_t Line, uint16_t Column, uint8_t *ptr)
+{
+	uint16_t refcolumn = Column * LCD_Currentfonts->Width;
+
+  /* Send the string character by character on lCD */
+  while (*ptr != 0)
+  {
+    /* Display one character on LCD */
+    LCD_DisplayChar(Line, refcolumn, *ptr);
+    /* Decrement the column position by 16 */
+    refcolumn += LCD_Currentfonts->Width;
+	if (refcolumn >= LCD_PIXEL_WIDTH) {
+		break;
+	}
+    /* Point on the next character */
+    ptr++;
+  }
+}
 /**
   * @brief  Sets a display window
   * @param  Xpos: specifies the X bottom left position.
