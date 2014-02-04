@@ -29,6 +29,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 
+extern char RTCInterrupt;
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -44,6 +45,8 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 
+//RTC Alarm handler
+void RTC_Alarm_IRQHandler(void);
 #ifdef __cplusplus
 }
 #endif

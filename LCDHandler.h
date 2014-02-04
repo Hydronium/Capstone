@@ -1,3 +1,4 @@
+#define BACKGROUND_COLOUR LCD_COLOR_WHITE
 
 void LCDInit(void);
 void LCDClear(void);

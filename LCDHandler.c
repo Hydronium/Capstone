@@ -4,13 +4,14 @@
 void LCDInit(void)
 {
 	STM32f4_Discovery_LCD_Init();
-	LCD_SetBackColor(LCD_COLOR_WHITE);
+	LCD_SetBackColor(BACKGROUND_COLOUR);
 	LCD_SetTextColor(LCD_COLOR_BLACK);
+	LCDClear();
 }
 
 void LCDClear(void)
 {
-	LCD_Clear(LCD_COLOR_WHITE);
+	LCD_Clear(BACKGROUND_COLOUR);
 }
 
 //20 columns by 10 lines

@@ -146,14 +146,15 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f4xx.s).                                               */
 /******************************************************************************/
 
-/**
-  * @brief  This function handles PPP interrupt request.
-  * @param  None
-  * @retval None
-  */
-/*void PPP_IRQHandler(void)
+void RTC_Alarm_IRQHandler(void)
 {
-}*/
+  if(RTC_GetITStatus(RTC_IT_ALRA) != RESET)
+  {
+		RTCInterrupt = 1;
+    RTC_ClearITPendingBit(RTC_IT_ALRA);
+    EXTI_ClearITPendingBit(EXTI_Line17);
+  } 
+}
 
 /**
   * @}
