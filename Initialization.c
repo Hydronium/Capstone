@@ -3,9 +3,11 @@
 
 #include "LCDHandler.h"
 #include "RTCHandler.h"
+#include "TimerHandler.h"
 
 void Initialization()
 {
 	LCDInit();
 	RTCInit();
+	//TimerInit();
 }

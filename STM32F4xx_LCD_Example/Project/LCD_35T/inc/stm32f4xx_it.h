@@ -30,6 +30,7 @@
 #include "stm32f4xx.h"
 
 extern char RTCInterrupt;
+extern char TimerInterrupt;
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

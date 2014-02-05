@@ -150,10 +150,20 @@ void RTC_Alarm_IRQHandler(void)
 {
   if(RTC_GetITStatus(RTC_IT_ALRA) != RESET)
   {
-		RTCInterrupt = 1;
+		RTCInterrupt++;
     RTC_ClearITPendingBit(RTC_IT_ALRA);
     EXTI_ClearITPendingBit(EXTI_Line17);
   } 
+}
+
+void TIM3_IRQHandler(void)
+{
+  if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+  {
+    TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+
+		TimerInterrupt = 1;
+  }
 }
 
 /**

@@ -11,6 +11,7 @@
 #include "RTCHandler.h"
 
 char RTCInterrupt = 0;
+char TimerInterrupt = 0;
 
 int main(void)
 {
@@ -18,6 +19,11 @@ int main(void)
 	RTC_DateTypeDef RTC_DateStructure;
 	volatile uint32_t dlycnt;
 	//int zz;
+	int seconds = 0;
+	
+	int datetestincrementer = 0;
+	int datetestincrementer2 = 0;
+	char test[10];
 	
 	char time[20];
 	char date[20];
@@ -49,9 +55,31 @@ int main(void)
 		
 		if (RTCInterrupt != 0)
 		{
-			RTCInterrupt = 0;
-			//Activate alarms
-			LCDDisplayText(2, 0, "Alarm went off");
+			//RTCInterrupt = 0;
+			
+			//Activate alarms	
+			if (RTCInterrupt == 1)
+			{
+				LCDDisplayText(2, 0, "Alarm 1");
+				RTCSetAlarm(0, 0, 0, 10);
+			}
+			if (RTCInterrupt == 2)
+			{
+				LCDDisplayText(3, 0, "Alarm 2");
+				RTCSetAlarm(0, 0, 0, 15);
+			}
+			if (RTCInterrupt == 3)
+			{
+				LCDDisplayText(4, 0, "Alarm 3");
+			}
+		}
+		
+		if (TimerInterrupt != 0)
+		{
+			TimerInterrupt = 0;
+			sprintf(test, "%d", seconds);
+			LCDDisplayText(3, 0, test);
+			seconds++;
 		}
 	}
 }
