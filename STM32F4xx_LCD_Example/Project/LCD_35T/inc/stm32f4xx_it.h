@@ -31,6 +31,15 @@
 
 extern char RTCInterrupt;
 extern char TimerInterrupt;
+extern int ProgramMode;
+extern int b2;
+extern int b3;
+extern int b4;
+	 
+extern int day;
+extern int hour;
+extern int minute;
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

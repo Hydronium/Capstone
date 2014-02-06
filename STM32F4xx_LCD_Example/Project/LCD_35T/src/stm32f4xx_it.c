@@ -22,6 +22,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
+#include "LCDHandler.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
@@ -165,6 +166,93 @@ void TIM3_IRQHandler(void)
 		TimerInterrupt = 1;
   }
 }
+
+/**
+ * External interrupt channel 0 Interrupt Handler. This handles
+ * the user button.
+ */
+/*
+void EXTI0_IRQHandler(void){
+	
+	EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE);
+	//state = 1;
+	if((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)) == 1){
+	//pb0_pressed = 1;
+		//wait = 1;
+	}
+ else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)) == 0){
+		//pb0_pressed = 0;
+	}
+}
+*/
+
+// Button 1, PB1
+void EXTI1_IRQHandler(void)
+{
+	if ((GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_1)) == 0)
+	{
+		if (ProgramMode == 0)
+		{
+			//LCDDisplayText(5, 0, "Button PB1");
+			ProgramMode++;
+		}
+		else if (ProgramMode == 1)
+		{
+			//LCDDisplayText(5, 0, "LALALA PB1");
+			ProgramMode--;
+		}
+	}
+ 
+	EXTI_ClearITPendingBit(EXTI_Line1);
+}
+
+// Button 2, PD2
+void EXTI2_IRQHandler(void)
+{
+	if ((GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_2)) == 0)
+	{
+		if (ProgramMode == 1)
+		{
+			b2++;
+			
+			if (b2 > 2)
+			{
+				b2 = 0; //0 - Day, 1 - Hour, 2 - Minute
+			}
+		}
+	}
+ 
+	EXTI_ClearITPendingBit(EXTI_Line2);
+}
+
+// Button 3, PA3
+void EXTI3_IRQHandler(void)
+{
+	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3)) == 0)
+	{
+		if (ProgramMode == 1)
+		{
+			b3++;
+		}
+	}
+ 
+	EXTI_ClearITPendingBit(EXTI_Line3);
+}
+
+// Button 4, PB4
+void EXTI4_IRQHandler(void)
+{
+	if ((GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_4)) == 0)
+	{
+		if (ProgramMode == 1)
+		{
+			b4++;
+		}
+	}
+ 
+	EXTI_ClearITPendingBit(EXTI_Line4);
+}
+
 
 /**
   * @}
