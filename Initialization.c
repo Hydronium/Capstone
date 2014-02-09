@@ -4,10 +4,12 @@
 #include "LCDHandler.h"
 #include "RTCHandler.h"
 #include "TimerHandler.h"
+#include "ProgramButtonHandler.h"
 
 void Initialization()
 {
 	LCDInit();
 	RTCInit();
-	//TimerInit();
+	TimerInit();
+	PBHandlerInit();
 }

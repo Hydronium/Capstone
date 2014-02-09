@@ -23,6 +23,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
 #include "LCDHandler.h"
+#include "TimerHandler.h"
+#include "ProgramButtonHandler.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
@@ -167,76 +169,54 @@ void TIM3_IRQHandler(void)
   }
 }
 
-/**
- * External interrupt channel 0 Interrupt Handler. This handles
- * the user button.
- */
-/*
-void EXTI0_IRQHandler(void){
+void TIM6_DAC_IRQHandler(void)
+{
+	TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
 	
-	EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE);
-	//state = 1;
-	if((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)) == 1){
-	//pb0_pressed = 1;
-		//wait = 1;
-	}
- else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)) == 0){
-		//pb0_pressed = 0;
+	EXTI_ClearITPendingBit(EXTI_Line0);
+	EXTI_ClearITPendingBit(EXTI_Line1);
+	EXTI_ClearITPendingBit(EXTI_Line2);
+	//EXTI_ClearITPendingBit(EXTI_Line3);
+	EXTI_ClearITPendingBit(EXTI_Line4);
+}
+/**
+ * External interrupt channel 0 Interrupt Handler.
+ */
+
+// Button 1, PB0
+void EXTI0_IRQHandler(void)
+{
+	if ((GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0)) == 0)
+	{
+		StartDebounceTimer();
+		PBHandlerPB1Pressed();
 	}
 }
-*/
 
-// Button 1, PB1
+// Button 2, PB1
 void EXTI1_IRQHandler(void)
 {
-	if ((GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_1)) == 0)
+	if ((GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1)) == 0)
 	{
-		if (ProgramMode == 0)
-		{
-			//LCDDisplayText(5, 0, "Button PB1");
-			ProgramMode++;
-		}
-		else if (ProgramMode == 1)
-		{
-			//LCDDisplayText(5, 0, "LALALA PB1");
-			ProgramMode--;
-		}
+		StartDebounceTimer();
+		PBHandlerPB2Pressed();
 	}
- 
-	EXTI_ClearITPendingBit(EXTI_Line1);
 }
 
-// Button 2, PD2
+// Button 3, PC2
 void EXTI2_IRQHandler(void)
 {
-	if ((GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_2)) == 0)
+	if ((GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_2)) == 0)
 	{
-		if (ProgramMode == 1)
-		{
-			b2++;
-			
-			if (b2 > 2)
-			{
-				b2 = 0; //0 - Day, 1 - Hour, 2 - Minute
-			}
-		}
+		StartDebounceTimer();
+		PBHandlerPB3Pressed();
 	}
- 
-	EXTI_ClearITPendingBit(EXTI_Line2);
 }
 
 // Button 3, PA3
 void EXTI3_IRQHandler(void)
 {
-	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3)) == 0)
-	{
-		if (ProgramMode == 1)
-		{
-			b3++;
-		}
-	}
- 
-	EXTI_ClearITPendingBit(EXTI_Line3);
+	
 }
 
 // Button 4, PB4
@@ -244,13 +224,9 @@ void EXTI4_IRQHandler(void)
 {
 	if ((GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_4)) == 0)
 	{
-		if (ProgramMode == 1)
-		{
-			b4++;
-		}
+		StartDebounceTimer();
+		PBHandlerPB4Pressed();
 	}
- 
-	EXTI_ClearITPendingBit(EXTI_Line4);
 }
 
 

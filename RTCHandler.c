@@ -36,10 +36,12 @@ void RTCInit(void)
 	RTC_WaitForSynchro();
 	
 	/* Calendar Configuration with LSI supposed at 32KHz */
-	RTC_InitStructure.RTC_AsynchPrediv = 0x7F;
-	RTC_InitStructure.RTC_SynchPrediv	=  0xFF; /* (32KHz / 128) - 1 = 0xFF*/
+	RTC_InitStructure.RTC_AsynchPrediv = 0x7D;//0x7F;      7C=124
+	RTC_InitStructure.RTC_SynchPrediv	=  0xC4;//0xFF; /* (32KHz / 128) - 1 = 0xFF = 255*/
 	RTC_InitStructure.RTC_HourFormat = RTC_HourFormat_24;
 	RTC_Init(&RTC_InitStructure);
+	
+	RTC_SmoothCalibConfig(RTC_SmoothCalibPeriod_32sec,RTC_SmoothCalibPlusPulses_Reset,511);
 	
 	/* Set the Time */
 	RTC_TimeStructure.RTC_Hours   = 0x00;
@@ -112,23 +114,30 @@ void RTCGetDate(RTC_DateTypeDef * DateStruct)
 
 void RTCSetAlarm(uint8_t date, uint8_t hours, uint8_t minutes, uint8_t seconds)
 {
-	RTC_AlarmTypeDef RTC_AlarmStructure;
+	/*RTC_AlarmTypeDef RTC_AlarmStructure;
 	
 	RTC_AlarmCmd(RTC_Alarm_A, DISABLE);
 	
-	///* Set the alarm 05h:20min:30s */
   RTC_AlarmStructure.RTC_AlarmTime.RTC_Hours   = hours;
   RTC_AlarmStructure.RTC_AlarmTime.RTC_Minutes = minutes;
   RTC_AlarmStructure.RTC_AlarmTime.RTC_Seconds = seconds;
   RTC_AlarmStructure.RTC_AlarmDateWeekDay = date;
   RTC_AlarmStructure.RTC_AlarmDateWeekDaySel = RTC_AlarmDateWeekDaySel_Date;
   RTC_AlarmStructure.RTC_AlarmMask = RTC_AlarmMask_DateWeekDay;
-	
-	
-	
-	/* Configure the RTC Alarm A register */
+
   RTC_SetAlarm(RTC_Format_BIN, RTC_Alarm_A, &RTC_AlarmStructure);
 	
 	RTC_AlarmCmd(RTC_Alarm_A, ENABLE);
-	RTC_ClearFlag(RTC_FLAG_ALRAF);
+	RTC_ClearFlag(RTC_FLAG_ALRAF);*/
+	
+	RTC->WPR = 0xCA;
+  RTC->WPR = 0x53;
+	
+	RTC->CR &= ~0x100;
+	
+	while((RTC->ISR & 0x01) != 1)
+	{
+	}
+	
+	
 }
