@@ -30,7 +30,7 @@
 #include "stm32f4xx.h"
 
 extern char RTCInterrupt;
-extern char TimerInterrupt;
+extern char timerInterrupt;
 	 
 //extern int day;
 //extern int hour;

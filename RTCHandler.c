@@ -130,14 +130,14 @@ void RTCSetAlarm(uint8_t date, uint8_t hours, uint8_t minutes, uint8_t seconds)
 	RTC_AlarmCmd(RTC_Alarm_A, ENABLE);
 	RTC_ClearFlag(RTC_FLAG_ALRAF);*/
 	
-	RTC->WPR = 0xCA;
-  RTC->WPR = 0x53;
+	//RTC->WPR = 0xCA;
+  //RTC->WPR = 0x53;
 	
-	RTC->CR &= ~0x100;
+	//RTC->CR &= ~0x100;
 	
-	while((RTC->ISR & 0x01) != 1)
-	{
-	}
+	//while((RTC->ISR & 0x01) != 1)
+	//{
+	//}
 	
 	
 }

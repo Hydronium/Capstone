@@ -5,11 +5,13 @@
 #include "RTCHandler.h"
 #include "TimerHandler.h"
 #include "ProgramButtonHandler.h"
+#include "VisualAlertsHandler.h"
 
 void Initialization()
 {
 	LCDInit();
-	RTCInit();
+	//RTCInit();
 	TimerInit();
 	PBHandlerInit();
+	VisualAlertsInit();
 }

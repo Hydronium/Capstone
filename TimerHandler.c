@@ -2,8 +2,8 @@
 
 void TimerInit(void)
 {
-	uint16_t PrescalerValue;
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	//uint16_t PrescalerValue;
+	//TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	
 	NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -19,7 +19,7 @@ void TimerInit(void)
   NVIC_Init(&NVIC_InitStructure);
 	
 	/* Compute the prescaler value */
-  PrescalerValue = (uint16_t)42000 - 1;//((SystemCoreClock / 2) / 2000) - 1;
+  //PrescalerValue = (uint16_t)42000 - 1;//((SystemCoreClock / 2) / 2000) - 1;
 
   /* Time base configuration */
   //TIM_TimeBaseStructure.TIM_Period = 2000 - 1;
@@ -41,7 +41,7 @@ void TimerInit(void)
 	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; // Enable TIM6 clock 
 	
 	/* 1s timer */
-	TIM3->PSC = 12999; // Set prescaler to 12999 
+	TIM3->PSC = 35999; // Set prescaler to 12999 
 	TIM3->ARR = 1999; // Set auto-reload to 1999 
 	
 	TIM3->CR1 &= ~TIM_CR1_OPM; // NOT One pulse mode 
@@ -57,9 +57,9 @@ void TimerInit(void)
 	/* Debounce Timer */
 	RCC->APB1ENR |= RCC_APB1ENR_TIM6EN; // Enable TIM6 clock 
 	
-	/* 200 ms timer */
-	TIM6->PSC = 12999; // Set prescaler value
-	TIM6->ARR = 399; // Set auto-reload value 
+	/* 50 ms timer */
+	TIM6->PSC = 35999; // Set prescaler value
+	TIM6->ARR = 799; // Set auto-reload value 
 	
 	TIM6->CR1 |= TIM_CR1_OPM; // One pulse mode 
 	

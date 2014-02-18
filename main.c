@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
-
+  
 //#include "stm32f4_discovery_lcd.h"
 #include "Initialization.h"
 #include "RTCHandler.h"
@@ -10,220 +10,282 @@
 #include "LCDHandler.h"
 #include "stm32f4_discovery_lcd.h"
 #include "ProgramButtonHandler.h"
-
+#include "AlarmHandler.h"
+#include "VisualAlertsHandler.h"
+  
 char RTCInterrupt = 0;
-char TimerInterrupt = 0; 
-
+char timerInterrupt = 0; 
+  
 int init1 = 0;
-
+int init2 = 0;
+  
 int day = 0;
 int hour = 0;
 int minute = 0;
-
-int SaveDay = 0;
-int SaveHour = 0;
-int SaveMinute = 0;
-
+int dispense = 0;
+  
+int dayDisplay = 0;
+int hourDisplay = 0;
+int minuteDisplay = 0;
+int secondDisplay = 0;
+int dispenseDisplay = 0;
+  
+int saveDay = 999;
+int saveHour = 999;
+int saveMinute = 999;
+int saveDispense = 999;
+int saveDay2 = 999;
+int saveHour2 = 999;
+int saveMinute2 = 999;
+int saveDispense2 = 999;
+int tempSeconds = 999;
+  
 int main(void)
 {
-	RTC_TimeTypeDef RTC_TimeStructure;
-	RTC_DateTypeDef RTC_DateStructure;
-	
-	int seconds = 0;
-
-	char test[10];
-	
-	char time[20];
-	char date[20];
-	char DayInfo[20];
-	char HourInfo[20];
-	char MinuteInfo[20];
-	
+    //RTC_TimeTypeDef RTC_TimeStructure;
+    //RTC_DateTypeDef RTC_DateStructure;
+      
+    //int seconds = 0;
+  
+    char test[10];
+      
+    //char time[20];
+    //char date[20];
+    char DayInfo[20];
+    char HourInfo[20];
+    char MinuteInfo[20];
+    char DispenseInfo[20];
+      
   Initialization();
-	
-	//MEAT
-	LCDDisplayText(5, 0, "Running Mode");
-	sprintf(test, "%d", seconds);
-	LCDDisplayText(3, 0, test);
-	
+      
+    //MEAT
+    LCDDisplayText(5, 0, "Running Mode");
+    //sprintf(test, "%d", seconds);
+    //LCDDisplayText(3, 0, test);
+    sprintf(test, "%d", dayDisplay);
+    LCDDisplayText(0, 0, test);
+    sprintf(test, "%0.2d:%0.2d:%0.2d", hourDisplay, minuteDisplay, secondDisplay);
+    LCDDisplayText(1, 0, test);
+      
   while (1)
-	{
-		
-		if (PBHandlerInProgramMode() == 0)
-		{	
-			if (init1 != 0) 
-			{
-				LCDClear();
-				PBHandlerResetSelections();
-				init1 = 0;
-			}
-			
-			LCDDisplayText(5, 0, "Running Mode");
-			sprintf(DayInfo, "Day---: %d", SaveDay);
-			LCDDisplayText(6, 0, DayInfo);
-			sprintf(HourInfo, "Hour--: %0.2d", SaveHour);
-			LCDDisplayText(7, 0, HourInfo);
-			sprintf(MinuteInfo, "Minute: %0.2d", SaveMinute);
-			LCDDisplayText(8, 0, MinuteInfo);
-		}
-		else if (PBHandlerInProgramMode() == 1)
-		{
-			if (init1 == 0)
-			{
-				LCDDisplayText(5, 0, "Program Mode");
-				LCD_SetTextColor(LCD_COLOR_RED);
-				LCDDisplayText(6, 0, "Day---:");
-				LCD_SetTextColor(LCD_COLOR_BLACK);
-				LCDDisplayText(7, 0, "Hour--:");
-				LCDDisplayText(8, 0, "Minute:");
-				init1++;
-			}
-		}
-		
-		if(PBHandlerInProgramMode() == 1)
-		{
-			if (PBHandlerIncrementSelection() == 1)
-			{
-				if (PBHandlerCurrentlySelectedLine() == 0)
-				{
-					day++;
-					
-					if (day == 7)
-					{
-						day = 0;
-					}
-					//LCDDisplayText(5, 0, "Program Mode");
-					//sprintf(DayInfo, "Day---: %d", day);
-					//LCD_SetTextColor(LCD_COLOR_RED);
-					//LCDDisplayText(6, 0, DayInfo);
-					//LCD_SetTextColor(LCD_COLOR_BLACK);
-					//sprintf(HourInfo, "Hour--: %0.2d", hour);
-					//LCDDisplayText(7, 0, HourInfo);
-					//sprintf(MinuteInfo, "Minute: %0.2d", minute);
-					//LCDDisplayText(8, 0, MinuteInfo);
-				}
-				else if (PBHandlerCurrentlySelectedLine() == 1)
-				{
-					hour++;
-					
-					if (hour == 24)
-					{
-						hour = 0;
-					}
-					/*LCDDisplayText(5, 0, "Program Mode");
-					sprintf(DayInfo, "Day---: %d", day);
-					LCDDisplayText(6, 0, DayInfo);
-					sprintf(HourInfo, "Hour--: %0.2d", hour);
-					LCD_SetTextColor(LCD_COLOR_RED);
-					LCDDisplayText(7, 0, HourInfo);
-					LCD_SetTextColor(LCD_COLOR_BLACK);
-					sprintf(MinuteInfo, "Minute: %0.2d", minute);
-					LCDDisplayText(8, 0, MinuteInfo);*/
-				}
-				else if (PBHandlerCurrentlySelectedLine() == 2)
-				{
-					minute = minute + 30;
-					
-					if (minute >= 40)
-					{
-						minute = 0;
-					}
-					
-					/*LCDDisplayText(5, 0, "Program Mode");
-					sprintf(DayInfo, "Day---: %d", day);
-					LCDDisplayText(6, 0, DayInfo);
-					sprintf(HourInfo, "Hour--: %0.2d", hour);
-					LCDDisplayText(7, 0, HourInfo);
-					sprintf(MinuteInfo, "Minute: %0.2d", minute);
-					LCD_SetTextColor(LCD_COLOR_RED);
-					LCDDisplayText(8, 0, MinuteInfo);
-					LCD_SetTextColor(LCD_COLOR_BLACK);*/
-				}
+    {
+          
+        if (PBHandlerInProgramMode() == 0)
+        {   
+            if (init1 != 0) 
+            {
+                LCDClear();
+                PBHandlerResetSelections();
+                init1 = 0;
+            }
+            if (init2 == 0)
+            {
+                LCDDisplayText(5, 0, "Running Mode");
+                LCDDisplayText(6, 0, "Day---: 0");
+                LCDDisplayText(7, 0, "Hour--: 00");
+                LCDDisplayText(8, 0, "Minute: 00");
+                LCDDisplayText(9, 0, "Dispense: 0");
+            }
+            else if (init2 == 1)
+            {
+                LCDDisplayText(5, 0, "Running Mode");
+                sprintf(DayInfo, "Day---: %d", saveDay);
+                LCDDisplayText(6, 0, DayInfo);
+                sprintf(HourInfo, "Hour--: %0.2d", saveHour);
+                LCDDisplayText(7, 0, HourInfo);
+                sprintf(MinuteInfo, "Minute: %0.2d", saveMinute);
+                LCDDisplayText(8, 0, MinuteInfo);
+                sprintf(DispenseInfo, "Dispense: %0.2d", saveDispense);
+                LCDDisplayText(9, 0, DispenseInfo);
+            }
+        }
+        else if (PBHandlerInProgramMode() == 1)
+        {
+            if (init1 == 0)
+            {
+                LCDDisplayText(5, 0, "Program Mode");
+                LCD_SetTextColor(LCD_COLOR_RED);
+                LCDDisplayText(6, 0, "Day---:");
+                LCD_SetTextColor(LCD_COLOR_BLACK);
+                LCDDisplayText(7, 0, "Hour--:");
+                LCDDisplayText(8, 0, "Minute:");
+                LCDDisplayText(9, 0, "Dispense:");
+                init1++;
+            }
+        }
+          
+        if(PBHandlerInProgramMode() == 1)
+        {
+            if (PBHandlerIncrementSelection() == 1)
+            {
+                if (PBHandlerCurrentlySelectedLine() == 0)
+                {
+                    day++;
+                      
+                    if (day == 7)
+                    {
+                        day = 0;
+                    }
+                }
+                else if (PBHandlerCurrentlySelectedLine() == 1)
+                {
+                    hour++;
+                      
+                    if (hour == 24)
+                    {
+                        hour = 0;
+                    }
+                }
+                else if (PBHandlerCurrentlySelectedLine() == 2)
+                {
+                    minute++;
+                      
+                    if (minute >= 60)
+                    {
+                        minute = 0;
+                    }
+                }
+                else if (PBHandlerCurrentlySelectedLine() == 3)
+                {
+                    dispense++;
+                    if (dispense >= 2)
+                    {
+                        dispense = 0;
+                    }
+                }
+  
+            }
+              
+            LCDDisplayText(5, 0, "Program Mode");
+            sprintf(DayInfo, "Day---: %d", day);
+            sprintf(HourInfo, "Hour--: %0.2d", hour);
+            sprintf(MinuteInfo, "Minute: %0.2d", minute);
+            sprintf(DispenseInfo, "Dispense: %0.2d", dispense);
+              
+            if (PBHandlerCurrentlySelectedLine() == 0)
+            {
+                LCD_SetTextColor(LCD_COLOR_RED);
+                LCDDisplayText(6, 0, DayInfo);
+                LCD_SetTextColor(LCD_COLOR_BLACK);
+                LCDDisplayText(7, 0, HourInfo); 
+                LCDDisplayText(8, 0, MinuteInfo);
+                LCDDisplayText(9, 0, DispenseInfo);
+            }
+            else if (PBHandlerCurrentlySelectedLine() == 1)
+            {
+                LCDDisplayText(6, 0, DayInfo);
+                LCD_SetTextColor(LCD_COLOR_RED);
+                LCDDisplayText(7, 0, HourInfo);
+                LCD_SetTextColor(LCD_COLOR_BLACK);
+                LCDDisplayText(8, 0, MinuteInfo);
+                LCDDisplayText(9, 0, DispenseInfo);
+            }
+            else if (PBHandlerCurrentlySelectedLine() == 2)
+            {
+                LCDDisplayText(6, 0, DayInfo);
+                LCDDisplayText(7, 0, HourInfo);
+                LCD_SetTextColor(LCD_COLOR_RED);
+                LCDDisplayText(8, 0, MinuteInfo);
+                LCD_SetTextColor(LCD_COLOR_BLACK);
+                LCDDisplayText(9, 0, DispenseInfo);
+            }
+            else if (PBHandlerCurrentlySelectedLine() == 3)
+            {
+                LCDDisplayText(6, 0, DayInfo);
+                LCDDisplayText(7, 0, HourInfo);
+                LCDDisplayText(8, 0, MinuteInfo);
+                LCD_SetTextColor(LCD_COLOR_RED);
+                LCDDisplayText(9, 0, DispenseInfo);
+                LCD_SetTextColor(LCD_COLOR_BLACK);
+            }
+              
+            if (PBHandlerUserWantsToSave() == 1)
+            {
+                if (dispense == 0)
+                {   
+                    saveDay = day;
+                    saveHour = hour;
+                    saveMinute = minute;
+                    saveDispense = dispense;
+                    init2 = 1;
+                }
+                if (dispense == 1)
+                {   
+                    saveDay2 = day;
+                    saveHour2 = hour;
+                    saveMinute2 = minute;
+                    saveDispense2 = dispense;
+                    init2 = 1;
+                }
+            }
+        }
 
-			}
-			
-			LCDDisplayText(5, 0, "Program Mode");
-			sprintf(DayInfo, "Day---: %d", day);
-			sprintf(HourInfo, "Hour--: %0.2d", hour);
-			sprintf(MinuteInfo, "Minute: %0.2d", minute);
-			
-			if (PBHandlerCurrentlySelectedLine() == 0)
-			{
-					LCD_SetTextColor(LCD_COLOR_RED);
-					LCDDisplayText(6, 0, DayInfo);
-					LCD_SetTextColor(LCD_COLOR_BLACK);
-					
-					LCDDisplayText(7, 0, HourInfo);
-					
-					LCDDisplayText(8, 0, MinuteInfo);
-			}
-			else if (PBHandlerCurrentlySelectedLine() == 1)
-			{
-					LCDDisplayText(6, 0, DayInfo);
-
-					LCD_SetTextColor(LCD_COLOR_RED);
-					LCDDisplayText(7, 0, HourInfo);
-					LCD_SetTextColor(LCD_COLOR_BLACK);
-
-					LCDDisplayText(8, 0, MinuteInfo);
-			}
-			else if (PBHandlerCurrentlySelectedLine() == 2)
-			{
-					LCDDisplayText(6, 0, DayInfo);
-
-					LCDDisplayText(7, 0, HourInfo);
-
-					LCD_SetTextColor(LCD_COLOR_RED);
-					LCDDisplayText(8, 0, MinuteInfo);
-					LCD_SetTextColor(LCD_COLOR_BLACK);
-			}
-			
-			
-			
-			if (PBHandlerUserWantsToSave() == 1)
-			{
-				SaveDay = day;
-				SaveHour = hour;
-				SaveMinute = minute;
-			}
-		}
-		
-		RTCGetTime(&RTC_TimeStructure);
-		RTCGetDate(&RTC_DateStructure);
-		sprintf(date, "D:%d %0.2d M:%0.2d Y:20%0.2d", (int)RTC_DateStructure.RTC_WeekDay, (int)RTC_DateStructure.RTC_Date, (int)RTC_DateStructure.RTC_Month, (int)RTC_DateStructure.RTC_Year);
-		sprintf(time, "%0.2d:%0.2d:%0.2d", (int)RTC_TimeStructure.RTC_Hours, (int)RTC_TimeStructure.RTC_Minutes, (int)RTC_TimeStructure.RTC_Seconds);
-		LCDDisplayText(0, 0, date);
-		LCDDisplayText(1, 0, time);
-		
-		if (RTCInterrupt != 0)
-		{
-			//RTCInterrupt = 0;
-			
-			//Activate alarms	
-			if (RTCInterrupt == 1)
-			{
-				LCDDisplayText(2, 0, "Alarm 1");
-				RTCSetAlarm(0, 0, 0, 10);
-			}
-			/*if (RTCInterrupt == 2)
-			{
-				LCDDisplayText(3, 0, "Alarm 2");
-				RTCSetAlarm(0, 0, 0, 15);
-			}
-			if (RTCInterrupt == 3)
-			{
-				LCDDisplayText(4, 0, "Alarm 3");
-			}*/
-		}
-		
-		if (TimerInterrupt != 0)
-		{
-			TimerInterrupt = 0;
-			seconds++;
-			sprintf(test, "%d", seconds);
-			LCDDisplayText(3, 0, test);
-			
-		}
-	}
+        if (RTCInterrupt != 0)
+        {
+            //RTCInterrupt = 0;
+              
+            //Activate alarms   
+            if (RTCInterrupt == 1)
+            {
+                //LCDDisplayText(2, 0, "Alarm 1");
+                //RTCSetAlarm(0, 0, 0, 10);
+            }
+            /*if (RTCInterrupt == 2)
+            {
+                LCDDisplayText(3, 0, "Alarm 2");
+                RTCSetAlarm(0, 0, 0, 15);
+            }
+            if (RTCInterrupt == 3)
+            {
+                LCDDisplayText(4, 0, "Alarm 3");
+            }*/
+        }
+          
+        if (timerInterrupt != 0)
+        {
+            timerInterrupt = 0;
+            secondDisplay++;
+              
+            if (secondDisplay >= 60)
+            {
+                minuteDisplay++;
+                secondDisplay = 0;
+                  
+                if (minuteDisplay >= 60)
+                {
+                    hourDisplay++;
+                    minuteDisplay = 0;
+                      
+                    if (hourDisplay >= 24)
+                    {
+                        dayDisplay++;
+                        hourDisplay = 0;
+                    }
+                }
+            }
+              
+            
+        }
+				sprintf(test, "%d", dayDisplay);
+        LCDDisplayText(0, 0, test);
+        sprintf(test, "%0.2d:%0.2d:%0.2d", hourDisplay, minuteDisplay, secondDisplay);
+        LCDDisplayText(1, 0, test);
+				
+        if (CheckAlarm(dayDisplay, hourDisplay, minuteDisplay, saveDay, saveHour, saveMinute, secondDisplay) == 1)
+        {
+            LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
+            ActivateAlarm();
+        }
+        if (CheckAlarm(dayDisplay, hourDisplay, minuteDisplay, saveDay2, saveHour2, saveMinute2, secondDisplay) == 1)
+        {
+            LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
+            ActivateAlarm();
+        }
+        if (secondDisplay == 5)
+        {
+            DeactivateAlarm();
+            //tempSeconds = 999;
+            LCDDisplayText(3, 0, "                    ");
+        }
+    }
 }
-
