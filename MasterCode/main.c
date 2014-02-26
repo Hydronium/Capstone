@@ -39,7 +39,22 @@ int saveHour2 = 999;
 int saveMinute2 = 999;
 int saveDispense2 = 999;
 int tempSeconds = 999;
-  
+/*
+int savedScheduleDay[30] = {0};
+int savedScheduleHour[30] = {0};
+int savedScheduleMinute[30] = {0};	
+int savedScheduleDispenseCycle[30] = {0};
+	*/
+	
+typedef struct structTime
+{
+	int day;
+	int hour;
+	int minute;
+	int second;
+}structTime;
+
+structTime currentTime;
 int main(void)
 {
     //RTC_TimeTypeDef RTC_TimeStructure;
@@ -89,13 +104,13 @@ int main(void)
             else if (init2 == 1)
             {
                 LCDDisplayText(5, 0, "Running Mode");
-                sprintf(DayInfo, "Day---: %d", saveDay);
+                sprintf(DayInfo, "Day---: %d", savedScheduleDay[dispense]);
                 LCDDisplayText(6, 0, DayInfo);
-                sprintf(HourInfo, "Hour--: %0.2d", saveHour);
+                sprintf(HourInfo, "Hour--: %0.2d", savedScheduleHour[dispense]);
                 LCDDisplayText(7, 0, HourInfo);
-                sprintf(MinuteInfo, "Minute: %0.2d", saveMinute);
+                sprintf(MinuteInfo, "Minute: %0.2d", savedScheduleMinute[dispense]);
                 LCDDisplayText(8, 0, MinuteInfo);
-                sprintf(DispenseInfo, "Dispense: %0.2d", saveDispense);
+                sprintf(DispenseInfo, "Dispense: %0.2d", savedScheduleDispenseCycle[dispense]);
                 LCDDisplayText(9, 0, DispenseInfo);
             }
         }
@@ -148,7 +163,7 @@ int main(void)
                 else if (PBHandlerCurrentlySelectedLine() == 3)
                 {
                     dispense++;
-                    if (dispense >= 2)
+                    if (dispense >= 28)
                     {
                         dispense = 0;
                     }
@@ -201,6 +216,13 @@ int main(void)
               
             if (PBHandlerUserWantsToSave() == 1)
             {
+							SetScheduledAlarms(day, hour, minute, dispense);
+							savedScheduleDay[dispense] = day;
+							savedScheduleHour[dispense] = hour;
+							savedScheduleMinute[dispense] = minute;
+							//savedScheduleDispenseCycle[dispense] = dispense; Redundant
+							init2 = 1;
+							/*
                 if (dispense == 0)
                 {   
                     saveDay = day;
@@ -216,7 +238,7 @@ int main(void)
                     saveMinute2 = minute;
                     saveDispense2 = dispense;
                     init2 = 1;
-                }
+                }*/
             }
         }
 
@@ -241,36 +263,49 @@ int main(void)
             }*/
         }
           
-        if (timerInterrupt != 0)
-        {
-            timerInterrupt = 0;
-            secondDisplay++;
-              
-            if (secondDisplay >= 60)
-            {
-                minuteDisplay++;
-                secondDisplay = 0;
-                  
-                if (minuteDisplay >= 60)
-                {
-                    hourDisplay++;
-                    minuteDisplay = 0;
-                      
-                    if (hourDisplay >= 24)
-                    {
-                        dayDisplay++;
-                        hourDisplay = 0;
-                    }
-                }
-            }
-              
-            
-        }
+				if (timerInterrupt != 0)
+				{
+					timerInterrupt = 0;
+					secondDisplay++;
+					currentTime.second++;
+
+					if (currentTime.second >= 60)
+					{
+						minuteDisplay++;
+						secondDisplay = 0;
+						currentTime.second = 0;
+						currentTime.minute++;
+
+						if (currentTime.minute >= 60)
+						{
+							hourDisplay++;
+							minuteDisplay = 0;
+							currentTime.minute = 0;
+							currentTime.hour++;
+
+							if (currentTime.hour >= 24)
+							{
+								dayDisplay++;
+								hourDisplay = 0;
+								currentTime.hour = 0;
+								currentTime.day++;
+								
+								if (currentTime.day >= 6)
+								{
+									currentTime.day = 0;
+								}
+							}
+						}
+					}
+				}
+				
 				sprintf(test, "%d", dayDisplay);
         LCDDisplayText(0, 0, test);
         sprintf(test, "%0.2d:%0.2d:%0.2d", hourDisplay, minuteDisplay, secondDisplay);
         LCDDisplayText(1, 0, test);
 				
+				if (CheckAlarm(savedSchedule
+				/*Removed Feb25
         if (CheckAlarm(dayDisplay, hourDisplay, minuteDisplay, saveDay, saveHour, saveMinute, secondDisplay) == 1)
         {
             LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
@@ -280,7 +315,8 @@ int main(void)
         {
             LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
             ActivateAlarm();
-        }
+        }*/
+				
         if (secondDisplay == 5)
         {
             DeactivateAlarm();
