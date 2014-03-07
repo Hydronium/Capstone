@@ -3,3 +3,4 @@
 void LCDInit(void);
 void LCDClear(void);
 void LCDDisplayText(int X, int Y, char * message);
+void LCDDisplayCurrentDayTime(int day, int hour, int minute, int dispenseCycle);

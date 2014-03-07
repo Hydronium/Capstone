@@ -12,6 +12,8 @@
 #include "ProgramButtonHandler.h"
 #include "AlarmHandler.h"
 #include "VisualAlertsHandler.h"
+#include "Types.h"
+
   
 char RTCInterrupt = 0;
 char timerInterrupt = 0; 
@@ -39,48 +41,32 @@ int saveHour2 = 999;
 int saveMinute2 = 999;
 int saveDispense2 = 999;
 int tempSeconds = 999;
-/*
-int savedScheduleDay[30] = {0};
-int savedScheduleHour[30] = {0};
-int savedScheduleMinute[30] = {0};	
-int savedScheduleDispenseCycle[30] = {0};
-	*/
-	
-typedef struct structTime
-{
-	int day;
-	int hour;
-	int minute;
-	int second;
-}structTime;
+
+int recentlySavedDay = 0;
+int recentlySavedHour = 0;
+int recentlySavedMinute = 0;
+int recentlySavedDispenseCycle = 0;
+
 
 structTime currentTime;
 int main(void)
 {
-    //RTC_TimeTypeDef RTC_TimeStructure;
-    //RTC_DateTypeDef RTC_DateStructure;
-      
-    //int seconds = 0;
-  
-    char test[10];
-      
-    //char time[20];
-    //char date[20];
-    char DayInfo[20];
-    char HourInfo[20];
-    char MinuteInfo[20];
-    char DispenseInfo[20];
-      
-  Initialization();
-      
-    //MEAT
-    LCDDisplayText(5, 0, "Running Mode");
-    //sprintf(test, "%d", seconds);
-    //LCDDisplayText(3, 0, test);
-    sprintf(test, "%d", dayDisplay);
-    LCDDisplayText(0, 0, test);
-    sprintf(test, "%0.2d:%0.2d:%0.2d", hourDisplay, minuteDisplay, secondDisplay);
-    LCDDisplayText(1, 0, test);
+	char test[10];
+		
+	char DayInfo[20];
+	char HourInfo[20];
+	char MinuteInfo[20];
+	char DispenseInfo[20];
+		
+	Initialization();
+		
+
+	LCDDisplayText(5, 0, "Running Mode");
+
+	sprintf(test, "%d", dayDisplay);
+	LCDDisplayText(0, 0, test);
+	sprintf(test, "%0.2d:%0.2d:%0.2d", hourDisplay, minuteDisplay, secondDisplay);
+	LCDDisplayText(1, 0, test);
       
   while (1)
     {
@@ -103,20 +89,22 @@ int main(void)
             }
             else if (init2 == 1)
             {
-                LCDDisplayText(5, 0, "Running Mode");
-                sprintf(DayInfo, "Day---: %d", savedScheduleDay[dispense]);
+							LCDDisplayText(5, 0, "Running Mode");
+							LCDDisplayCurrentDayTime(recentlySavedDay, recentlySavedHour, recentlySavedMinute, recentlySavedDispenseCycle);
+
+                /*sprintf(DayInfo, "Day---: %d", recentlySavedDay);
                 LCDDisplayText(6, 0, DayInfo);
-                sprintf(HourInfo, "Hour--: %0.2d", savedScheduleHour[dispense]);
+                sprintf(HourInfo, "Hour--: %0.2d", recentlySavedHour);
                 LCDDisplayText(7, 0, HourInfo);
-                sprintf(MinuteInfo, "Minute: %0.2d", savedScheduleMinute[dispense]);
+                sprintf(MinuteInfo, "Minute: %0.2d", recentlySavedMinute);
                 LCDDisplayText(8, 0, MinuteInfo);
-                sprintf(DispenseInfo, "Dispense: %0.2d", savedScheduleDispenseCycle[dispense]);
-                LCDDisplayText(9, 0, DispenseInfo);
+                sprintf(DispenseInfo, "Dispense: %0.2d", recentlySavedDispenseCycle);
+                LCDDisplayText(9, 0, DispenseInfo);*/
             }
         }
         else if (PBHandlerInProgramMode() == 1)
         {
-            if (init1 == 0)
+            if (init1 == 0) //Test to see if this is even necessary.
             {
                 LCDDisplayText(5, 0, "Program Mode");
                 LCD_SetTextColor(LCD_COLOR_RED);
@@ -217,10 +205,11 @@ int main(void)
             if (PBHandlerUserWantsToSave() == 1)
             {
 							SetScheduledAlarms(day, hour, minute, dispense);
-							savedScheduleDay[dispense] = day;
-							savedScheduleHour[dispense] = hour;
-							savedScheduleMinute[dispense] = minute;
-							//savedScheduleDispenseCycle[dispense] = dispense; Redundant
+							recentlySavedDay = day;
+							recentlySavedHour = hour;
+							recentlySavedMinute = minute;
+							recentlySavedDispenseCycle = dispense;
+							
 							init2 = 1;
 							/*
                 if (dispense == 0)
@@ -304,7 +293,7 @@ int main(void)
         sprintf(test, "%0.2d:%0.2d:%0.2d", hourDisplay, minuteDisplay, secondDisplay);
         LCDDisplayText(1, 0, test);
 				
-				if (CheckAlarm(savedSchedule
+				if (CheckAlarm(currentTime) == ALARM_EXISTS)
 				/*Removed Feb25
         if (CheckAlarm(dayDisplay, hourDisplay, minuteDisplay, saveDay, saveHour, saveMinute, secondDisplay) == 1)
         {

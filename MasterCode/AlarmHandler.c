@@ -1,16 +1,12 @@
 #include "AlarmHandler.h"
 
-int savedScheduleDay[30] = {0};
-int savedScheduleHour[30] = {0};
-int savedScheduleMinute[30] = {0};	
+
+int savedScheduleDay[DISPENSE_CYCLES] = {0};
+int savedScheduleHour[DISPENSE_CYCLES] = {0};
+int savedScheduleMinute[DISPENSE_CYCLES] = {0};	
 //int savedScheduleDispenseCycle[30] = {0};
 
-typedef struct structSchedule
-{
-	int savedScheduleDay;
-	int savedScheduleHour;
-	int savedScheduleMinute;	
-} structSchedule;
+
 
 structSchedule savedSchedule[30] = {0};
 
@@ -23,14 +19,18 @@ void SetScheduledAlarms(int day, int hour, int minute, int dispenseCycle)
 	savedScheduleMinute[dispenseCycle] = minute;
 }
 
-int CheckAlarm(structCurrentTime time, int size)
+int CheckAlarm(structTime time)
 {
-	int returnValue = 0; //ALARM_NOT_EXISTS
-	for (int xx = 0; xx < size; xx++)
+	int alarmValue = ALARM_NOT_EXISTS;
+	int xx;
+	for (xx = 0; xx <= DISPENSE_CYCLES; xx++)
 	{
-		if (savedSchedule[xx].savedScheduleDay == time
+		if ( (savedSchedule[xx].savedScheduleDay == time.day) 		&&
+				 (savedSchedule[xx].savedScheduleHour == time.hour) 	&&
+				 (savedSchedule[xx].savedScheduleMinute == time.minute) )
+			alarmValue = ALARM_EXISTS;
 	}
-	return 0;
+	return alarmValue;
 }
 /*Commented Feb25
 int CheckAlarm(int currDay, int currHour, int currMinute, int alarmDay, int alarmHour, int alarmMinute, int alarmSecond)
