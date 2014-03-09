@@ -51,6 +51,7 @@ int recentlySavedDispenseCycle = 0;
 structTime currentTime;
 int main(void)
 {
+	int scheduleState = 0;
 	char test[10];
 		
 	char DayInfo[20];
@@ -63,14 +64,14 @@ int main(void)
 
 	LCDDisplayText(5, 0, "Running Mode");
 
-	sprintf(test, "%d", dayDisplay);
+	sprintf(test, "%d", currentTime.day);
 	LCDDisplayText(0, 0, test);
-	sprintf(test, "%0.2d:%0.2d:%0.2d", hourDisplay, minuteDisplay, secondDisplay);
+	sprintf(test, "%0.2d:%0.2d:%0.2d", currentTime.hour, currentTime.minute, currentTime.second);
 	LCDDisplayText(1, 0, test);
-      
+  
   while (1)
     {
-          
+     
         if (PBHandlerInProgramMode() == 0)
         {   
             if (init1 != 0) 
@@ -82,15 +83,16 @@ int main(void)
             if (init2 == 0)
             {
                 LCDDisplayText(5, 0, "Running Mode");
-                LCDDisplayText(6, 0, "Day---: 0");
+               /*LCDDisplayText(6, 0, "Day---: 0");
                 LCDDisplayText(7, 0, "Hour--: 00");
                 LCDDisplayText(8, 0, "Minute: 00");
-                LCDDisplayText(9, 0, "Dispense: 0");
+                LCDDisplayText(9, 0, "Dispense: 0");*/
+								LCDDisplayCurrentAlarmTime(0, 0, 0, 0);
             }
             else if (init2 == 1)
             {
 							LCDDisplayText(5, 0, "Running Mode");
-							LCDDisplayCurrentDayTime(recentlySavedDay, recentlySavedHour, recentlySavedMinute, recentlySavedDispenseCycle);
+							LCDDisplayCurrentAlarmTime(recentlySavedDay, recentlySavedHour, recentlySavedMinute, recentlySavedDispenseCycle);
 
                 /*sprintf(DayInfo, "Day---: %d", recentlySavedDay);
                 LCDDisplayText(6, 0, DayInfo);
@@ -115,10 +117,7 @@ int main(void)
                 LCDDisplayText(9, 0, "Dispense:");
                 init1++;
             }
-        }
-          
-        if(PBHandlerInProgramMode() == 1)
-        {
+
             if (PBHandlerIncrementSelection() == 1)
             {
                 if (PBHandlerCurrentlySelectedLine() == 0)
@@ -160,10 +159,11 @@ int main(void)
             }
               
             LCDDisplayText(5, 0, "Program Mode");
-            sprintf(DayInfo, "Day---: %d", day);
+            /*sprintf(DayInfo, "Day---: %d", day);
             sprintf(HourInfo, "Hour--: %0.2d", hour);
             sprintf(MinuteInfo, "Minute: %0.2d", minute);
-            sprintf(DispenseInfo, "Dispense: %0.2d", dispense);
+            sprintf(DispenseInfo, "Dispense: %0.2d", dispense);*/
+						LCDDisplayCurrentAlarmTime(day, hour, minute, dispense);
               
             if (PBHandlerCurrentlySelectedLine() == 0)
             {
@@ -230,7 +230,7 @@ int main(void)
                 }*/
             }
         }
-
+/*
         if (RTCInterrupt != 0)
         {
             //RTCInterrupt = 0;
@@ -241,7 +241,7 @@ int main(void)
                 //LCDDisplayText(2, 0, "Alarm 1");
                 //RTCSetAlarm(0, 0, 0, 10);
             }
-            /*if (RTCInterrupt == 2)
+            if (RTCInterrupt == 2)
             {
                 LCDDisplayText(3, 0, "Alarm 2");
                 RTCSetAlarm(0, 0, 0, 15);
@@ -249,33 +249,33 @@ int main(void)
             if (RTCInterrupt == 3)
             {
                 LCDDisplayText(4, 0, "Alarm 3");
-            }*/
-        }
+            }
+        }*/
           
 				if (timerInterrupt != 0)
 				{
 					timerInterrupt = 0;
-					secondDisplay++;
+					//secondDisplay++;
 					currentTime.second++;
 
 					if (currentTime.second >= 60)
 					{
-						minuteDisplay++;
-						secondDisplay = 0;
+						//minuteDisplay++;
+						//secondDisplay = 0;
 						currentTime.second = 0;
 						currentTime.minute++;
 
 						if (currentTime.minute >= 60)
 						{
-							hourDisplay++;
-							minuteDisplay = 0;
+							//hourDisplay++;
+							//minuteDisplay = 0;
 							currentTime.minute = 0;
 							currentTime.hour++;
 
 							if (currentTime.hour >= 24)
 							{
-								dayDisplay++;
-								hourDisplay = 0;
+								//dayDisplay++;
+								//hourDisplay = 0;
 								currentTime.hour = 0;
 								currentTime.day++;
 								
@@ -288,29 +288,40 @@ int main(void)
 					}
 				}
 				
-				sprintf(test, "%d", dayDisplay);
+				sprintf(test, "%d", currentTime.day);
         LCDDisplayText(0, 0, test);
-        sprintf(test, "%0.2d:%0.2d:%0.2d", hourDisplay, minuteDisplay, secondDisplay);
+        sprintf(test, "%0.2d:%0.2d:%0.2d", currentTime.hour, currentTime.minute, currentTime.second);
         LCDDisplayText(1, 0, test);
 				
-				if (CheckAlarm(currentTime) == ALARM_EXISTS)
-				/*Removed Feb25
-        if (CheckAlarm(dayDisplay, hourDisplay, minuteDisplay, saveDay, saveHour, saveMinute, secondDisplay) == 1)
-        {
-            LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
-            ActivateAlarm();
-        }
-        if (CheckAlarm(dayDisplay, hourDisplay, minuteDisplay, saveDay2, saveHour2, saveMinute2, secondDisplay) == 1)
-        {
-            LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
-            ActivateAlarm();
-        }*/
+			if (PBHandlerUserWantsToReset() == 1)
+			{
+				scheduleState = 1;
 				
-        if (secondDisplay == 5)
-        {
-            DeactivateAlarm();
-            //tempSeconds = 999;
-            LCDDisplayText(3, 0, "                    ");
-        }
+				LCDDisplayText(2, 0, "Schedule Enabled");
+			}
+			
+			if (CheckAlarm(currentTime) == ALARM_EXISTS && 
+					scheduleState == 1)
+			{
+				LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
+				ActivateAlarm();
+			}
+			/*Removed Feb25
+			if (CheckAlarm(dayDisplay, hourDisplay, minuteDisplay, saveDay, saveHour, saveMinute, secondDisplay) == 1)
+			{
+					
+			}
+			if (CheckAlarm(dayDisplay, hourDisplay, minuteDisplay, saveDay2, saveHour2, saveMinute2, secondDisplay) == 1)
+			{
+					LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
+					ActivateAlarm();
+			}*/
+			
+			if (currentTime.second == 5)
+			{
+				DeactivateAlarm();
+				//tempSeconds = 999;
+				LCDDisplayText(3, 0, "                    ");
+			}
     }
 }

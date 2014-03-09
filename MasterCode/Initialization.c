@@ -6,6 +6,7 @@
 #include "TimerHandler.h"
 #include "ProgramButtonHandler.h"
 #include "VisualAlertsHandler.h"
+#include "AlarmHandler.h"
 
 void Initialization()
 {
@@ -14,4 +15,5 @@ void Initialization()
 	TimerInit();
 	PBHandlerInit();
 	VisualAlertsInit();
+	AlarmsInit();
 }
