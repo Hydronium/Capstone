@@ -18,30 +18,10 @@ void TimerInit(void)
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 	
-	/* Compute the prescaler value */
-  //PrescalerValue = (uint16_t)42000 - 1;//((SystemCoreClock / 2) / 2000) - 1;
-
-  /* Time base configuration */
-  //TIM_TimeBaseStructure.TIM_Period = 2000 - 1;
-  //TIM_TimeBaseStructure.TIM_Prescaler = 0;
-  //TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  //TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-
-  //TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-
-  /* Prescaler configuration */
-  //TIM_PrescalerConfig(TIM3, PrescalerValue, TIM_PSCReloadMode_Immediate);
-   
-  /* TIM Interrupts enable */
-  //TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-
-  /* TIM3 enable counter */
-  //TIM_Cmd(TIM3, ENABLE);
-	
-	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; // Enable TIM6 clock 
+	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; // Enable TIM3 clock 
 	
 	/* 1s timer */
-	TIM3->PSC = 35999; // Set prescaler to 12999 
+	TIM3->PSC = 35999; // Set prescaler to 35999 
 	TIM3->ARR = 1999; // Set auto-reload to 1999 
 	
 	TIM3->CR1 &= ~TIM_CR1_OPM; // NOT One pulse mode 
@@ -57,7 +37,7 @@ void TimerInit(void)
 	/* Debounce Timer */
 	RCC->APB1ENR |= RCC_APB1ENR_TIM6EN; // Enable TIM6 clock 
 	
-	/* 50 ms timer */
+	/* 400 ms timer */
 	TIM6->PSC = 35999; // Set prescaler value
 	TIM6->ARR = 799; // Set auto-reload value 
 	
@@ -69,6 +49,22 @@ void TimerInit(void)
 	NVIC_EnableIRQ(TIM6_DAC_IRQn); // Enable TIM6 IRQ 
 	
 	//TIM6->CR1 |= TIM_CR1_CEN; // Enable TIM6 counter
+	
+	/* Stepper Motor Timer */
+	RCC->APB1ENR |= RCC_APB1ENR_TIM7EN; //Enable TIM7 clock
+	
+	/* 1s timer */
+	TIM7->PSC = 35999; // Set prescaler value
+	TIM7->ARR = 1999; // Set auto-reload value
+	
+	TIM7->CR1 &= ~TIM_CR1_OPM; // NOT One pulse mode 
+
+	TIM7->EGR |= TIM_EGR_UG; // Force update 
+	TIM7->SR &= ~TIM_SR_UIF; // Clear the update flag 
+	TIM7->DIER |= TIM_DIER_UIE; // Enable interrupt on update event 
+	NVIC_EnableIRQ(TIM7_IRQn); // Enable TIM7 IRQ 
+	
+	//Timer will be enabled when the stepper motor needs to move.
 }
 
 void StartDebounceTimer(void)
@@ -76,3 +72,17 @@ void StartDebounceTimer(void)
 	TIM6->CR1 |= TIM_CR1_CEN; // Enable TIM6 counter
 }
 
+void StartCartridgeTimer(void)
+{
+	TIM7->CR1 |= TIM_CR1_CEN;
+}
+
+void StopCartridgeTimer(void)
+{
+	TIM7->CR1 &= ~TIM_CR1_CEN;
+}
+
+void ResetCartridgeTimer(void)
+{
+	TIM7->CNT = 0;
+}

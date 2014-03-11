@@ -16,12 +16,12 @@ void VisualAlertsInit(void)
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 
-void ActivateAlarm(void)
+void ActivateVisualAlert(void)
 {
 	GPIOC->BSRRL = GPIO_Pin_2;
 }
 
-void DeactivateAlarm(void)
+void DeactivateVisualAlert(void)
 {
 	GPIOC->BSRRH = GPIO_Pin_2;
 }

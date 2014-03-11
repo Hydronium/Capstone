@@ -21,32 +21,67 @@ void LCDDisplayText(int X, int Y, char * message)
 	LCD_DisplayStringLineColumn(LINE(X), Y, (uint8_t *)message);
 }
 
-void LCDDisplayCurrentAlarmTime(int day, int hour, int minute, int dispenseCycle)
+void LCDDisplayCurrentAlarmTime(int day, int hour, int minute, int dispenseCycle, int selectedLine)
 {
 	char DayInfo[20];
 	char HourInfo[20];
 	char MinuteInfo[20];
 	char DispenseInfo[20];
 	
+	LCD_SetTextColor(LCD_COLOR_BLACK);
+	
 	switch(day)
 	{
-		case 0: sprintf(DayInfo, "     Day: Mon");
-		case 1: sprintf(DayInfo, "     Day: Tue");
-		case 2: sprintf(DayInfo, "     Day: Wed");
-		case 3: sprintf(DayInfo, "     Day: Thu");
-		case 4: sprintf(DayInfo, "     Day: Fri");
-		case 5: sprintf(DayInfo, "     Day: Sat");
-		case 6: sprintf(DayInfo, "     Day: Sun");
+		case 0: sprintf(DayInfo, "     Day: Mon"); break;
+		case 1: sprintf(DayInfo, "     Day: Tue"); break;
+		case 2: sprintf(DayInfo, "     Day: Wed"); break;
+		case 3: sprintf(DayInfo, "     Day: Thu"); break;
+		case 4: sprintf(DayInfo, "     Day: Fri"); break;
+		case 5: sprintf(DayInfo, "     Day: Sat"); break;
+		case 6: sprintf(DayInfo, "     Day: Sun"); break;
+		default: sprintf(DayInfo, "     Day: Sun"); break;
+	}
+	sprintf(HourInfo, "    Hour: %0.2d", hour);
+	sprintf(MinuteInfo, "  Minute: %0.2d", minute);
+	sprintf(DispenseInfo, "Dispense: %0.2d", dispenseCycle);
+	
+	if (selectedLine == 0)
+	{
+		LCD_SetTextColor(LCD_COLOR_RED);
+	}
+	LCDDisplayText(6, 0, DayInfo);
+	if (selectedLine == 0)
+	{
+		LCD_SetTextColor(LCD_COLOR_BLACK);
 	}
 	
-	LCDDisplayText(6, 0, DayInfo);
-	
-	sprintf(HourInfo, "    Hour: %0.2d", hour);
+	if (selectedLine == 1)
+	{
+		LCD_SetTextColor(LCD_COLOR_RED);
+	}
 	LCDDisplayText(7, 0, HourInfo);
+	if (selectedLine == 1)
+	{
+		LCD_SetTextColor(LCD_COLOR_BLACK);
+	}
 	
-	sprintf(MinuteInfo, "  Minute: %0.2d", minute);
+	if (selectedLine == 2)
+	{
+		LCD_SetTextColor(LCD_COLOR_RED);
+	}
 	LCDDisplayText(8, 0, MinuteInfo);
+	if (selectedLine == 2)
+	{
+		LCD_SetTextColor(LCD_COLOR_BLACK);
+	}
 	
-	sprintf(DispenseInfo, "Dispense: %0.2d", dispenseCycle);
+	if (selectedLine == 3)
+	{
+		LCD_SetTextColor(LCD_COLOR_RED);
+	}
 	LCDDisplayText(9, 0, DispenseInfo);
+	if (selectedLine == 3)
+	{
+		LCD_SetTextColor(LCD_COLOR_BLACK);
+	}
 }

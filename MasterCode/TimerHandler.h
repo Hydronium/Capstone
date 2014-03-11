@@ -2,3 +2,7 @@
 
 void TimerInit(void);
 void StartDebounceTimer(void);
+
+void StartCartridgeTimer(void);
+void StopCartridgeTimer(void);
+void ResetCartridgeTimer(void);

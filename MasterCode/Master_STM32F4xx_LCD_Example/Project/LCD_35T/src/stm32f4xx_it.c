@@ -25,6 +25,7 @@
 #include "LCDHandler.h"
 #include "TimerHandler.h"
 #include "ProgramButtonHandler.h"
+#include "StepperMotorHandler.h"
   
 	int thing = 0;
 /** @addtogroup STM32F4xx_StdPeriph_Examples
@@ -166,7 +167,7 @@ void TIM3_IRQHandler(void)
   {
     TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
   
-        timerInterrupt = 1;
+    timerInterrupt = 1;
   }
 }
   
@@ -191,12 +192,16 @@ void TIM6_DAC_IRQHandler(void)
 	NVIC_EnableIRQ(EXTI9_5_IRQn);
 	NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
-/**
- * External interrupt channel 0 Interrupt Handler.
- */
-  
 
+void TIM7_IRQHandler(void)
+{
+	if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
+  {
+    TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
   
+    MoveOneStep();
+  }
+}  
 //PA5 and PA8
 void EXTI9_5_IRQHandler(void)
 {
