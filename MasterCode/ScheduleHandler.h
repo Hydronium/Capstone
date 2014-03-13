@@ -5,7 +5,7 @@
 //Removed feb25
 //int CheckAlarm(int currDay, int currHour, int currMinute, int alarmDay, int alarmHour, int alarmMinute, int alarmSecond);
 
-void AlarmsInit(void);
+void ScheduleInit(void);
 
 int CheckAlarm(structTime time);
 

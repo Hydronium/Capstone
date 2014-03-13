@@ -35,27 +35,28 @@ void TimerInit(void)
 	
 	
 	/* Debounce Timer */
-	RCC->APB1ENR |= RCC_APB1ENR_TIM6EN; // Enable TIM6 clock 
+	RCC->APB1ENR |= RCC_APB1ENR_TIM4EN; // Enable TIM6 clock 
 	
-	/* 400 ms timer */
-	TIM6->PSC = 35999; // Set prescaler value
-	TIM6->ARR = 799; // Set auto-reload value 
+	/* 250 ms timer */
+	TIM4->PSC = 35999; // Set prescaler value
+	TIM4->ARR = 499; // Set auto-reload value 
 	
-	TIM6->CR1 |= TIM_CR1_OPM; // One pulse mode 
+	TIM4->CR1 |= TIM_CR1_OPM; // One pulse mode 
 	
-	TIM6->EGR |= TIM_EGR_UG; // Force update 
-	TIM6->SR &= ~TIM_SR_UIF; // Clear the update flag 
-	TIM6->DIER |= TIM_DIER_UIE; // Enable interrupt on update event 
-	NVIC_EnableIRQ(TIM6_DAC_IRQn); // Enable TIM6 IRQ 
+	TIM4->EGR |= TIM_EGR_UG; // Force update 
+	TIM4->SR &= ~TIM_SR_UIF; // Clear the update flag 
+	//TIM4->DIER |= TIM_DIER_UIE; // Enable interrupt on update event 
+	TIM4->DIER = TIM_DIER_UIE; //Enable interrupt on update event, but disable everything else
+	NVIC_EnableIRQ(TIM4_IRQn); // Enable TIM6 IRQ 
 	
 	//TIM6->CR1 |= TIM_CR1_CEN; // Enable TIM6 counter
 	
 	/* Stepper Motor Timer */
 	RCC->APB1ENR |= RCC_APB1ENR_TIM7EN; //Enable TIM7 clock
 	
-	/* 1s timer */
+	/* 25ms timer */
 	TIM7->PSC = 35999; // Set prescaler value
-	TIM7->ARR = 1999; // Set auto-reload value
+	TIM7->ARR = 49; // Set auto-reload value
 	
 	TIM7->CR1 &= ~TIM_CR1_OPM; // NOT One pulse mode 
 
@@ -69,7 +70,7 @@ void TimerInit(void)
 
 void StartDebounceTimer(void)
 {
-	TIM6->CR1 |= TIM_CR1_CEN; // Enable TIM6 counter
+	TIM4->CR1 |= TIM_CR1_CEN; // Enable TIM6 counter
 }
 
 void StartCartridgeTimer(void)

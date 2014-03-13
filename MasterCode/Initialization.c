@@ -6,7 +6,8 @@
 #include "TimerHandler.h"
 #include "ProgramButtonHandler.h"
 #include "VisualAlertsHandler.h"
-#include "AlarmHandler.h"
+#include "ScheduleHandler.h"
+#include "StepperMotorHandler.h"
 
 void Initialization()
 {
@@ -15,5 +16,6 @@ void Initialization()
 	TimerInit();
 	PBHandlerInit();
 	VisualAlertsInit();
-	AlarmsInit();
+	ScheduleInit();
+	StepperMotorInit();
 }

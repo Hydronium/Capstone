@@ -1,7 +1,8 @@
 #include "ProgramButtonHandler.h"
 
-int ProgramMode = 0, LineSelection = 0, IncrementValue = 0, SaveSettings = 0, ResetPressed = 0;
+int ProgramMode = 0, LineSelection = 0, IncrementValue = 0, SaveSettings = 0, ResetPressed = 0, DispenseButtonPressed = 0;
 int thing2 = 0;
+
 void PBHandlerInit(void)
 {
 	EXTI_InitTypeDef   EXTI_InitStructure;
@@ -9,18 +10,43 @@ void PBHandlerInit(void)
   GPIO_InitTypeDef   GPIO_InitStructure;
   NVIC_InitTypeDef   NVIC_InitStructure;
 
-  /* Enable GPIOA clock */
+  /* Enable input clocks */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-	//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
-	//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 
 	//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
   /* Enable SYSCFG clock */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+	// ----------------------------- "Button 6 (Dispense)", Pin C12 ---------------------------------------------------- //
+	
+  // Configure PC12 pin as input
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+  // Connect EXTI Line12 to PC12 pin
+  SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource12);
+
+  // Configure EXTI Line12
+  EXTI_InitStructure.EXTI_Line = EXTI_Line12;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+/*
+  //Enable and set EXTI Line3 Interrupt to the lowest priority
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);*/
 	
 	// ----------------------------- "Button 5 (Reset)", Pin B14 ---------------------------------------------------- //
 	
-  // Configure PB14 pin as input floating
+  // Configure PB14 pin as input
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
@@ -46,7 +72,7 @@ void PBHandlerInit(void)
 	
 	// ----------------------------- "Button 1", Pin A15 ---------------------------------------------------- //
 	
-  // Configure PA15 pin as input floating
+  // Configure PA15 pin as input
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
@@ -71,7 +97,7 @@ void PBHandlerInit(void)
   NVIC_Init(&NVIC_InitStructure);
 	
 	// ----------------------------- "Button 2", Pin A5 ---------------------------------------------------- //
-  // Configure PA5 pin as input floating 
+  // Configure PA5 pin as input 
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
@@ -194,6 +220,11 @@ void PBHandlerPB5Pressed(void)
 	ResetPressed = 1;
 }
 
+void PBHandlerPB6Pressed(void)
+{
+	DispenseButtonPressed = 1;
+}
+
 int PBHandlerInProgramMode(void)
 {
 	return ProgramMode;
@@ -242,6 +273,19 @@ int PBHandlerUserWantsToReset(void)
 	if (ResetPressed > 0)
 	{
 		ResetPressed = 0;
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int PBHandlerUserPressedDispenseButton(void)
+{
+	if (DispenseButtonPressed > 0)
+	{
+		DispenseButtonPressed = 0;
 		return 1;
 	}
 	else

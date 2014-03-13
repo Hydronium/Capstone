@@ -31,6 +31,7 @@
 
 extern char RTCInterrupt;
 extern char timerInterrupt;
+extern char alarmState;
 	 
 //extern int day;
 //extern int hour;

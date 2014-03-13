@@ -1,4 +1,4 @@
-#include "AlarmHandler.h"
+#include "ScheduleHandler.h"
 
 /*
 int savedScheduleDay[DISPENSE_CYCLES] = {999};
@@ -8,7 +8,7 @@ int savedScheduleMinute[DISPENSE_CYCLES] = {999};	*/
 
 structSchedule savedSchedule[DISPENSE_CYCLES] = {0};
 
-void AlarmsInit(void)
+void ScheduleInit(void)
 {
 	int xx;
 	for (xx = 0; xx <= DISPENSE_CYCLES; xx++)

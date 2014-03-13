@@ -165,15 +165,14 @@ void TIM3_IRQHandler(void)
 {
   if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
   {
-    TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-  
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
     timerInterrupt = 1;
   }
 }
   
-void TIM6_DAC_IRQHandler(void)
+void TIM4_IRQHandler(void)
 {
-	TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
+	TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 		
 	//EXTI_ClearITPendingBit(EXTI_Line0);
 	//EXTI_ClearITPendingBit(EXTI_Line1);
@@ -182,15 +181,17 @@ void TIM6_DAC_IRQHandler(void)
 	//EXTI_ClearITPendingBit(EXTI_Line4);
 	
 	//EXTI_ClearITPendingBit(EXTI_Line3);
-	EXTI_ClearITPendingBit(EXTI_Line5);
+	/*EXTI_ClearITPendingBit(EXTI_Line5);
 	EXTI_ClearITPendingBit(EXTI_Line8);
 	EXTI_ClearITPendingBit(EXTI_Line10);
+	EXTI_ClearITPendingBit(EXTI_Line12);
 	EXTI_ClearITPendingBit(EXTI_Line14);
-	EXTI_ClearITPendingBit(EXTI_Line15);
+	EXTI_ClearITPendingBit(EXTI_Line15);*/
 	
 	//NVIC_EnableIRQ(EXTI3_IRQn);
 	NVIC_EnableIRQ(EXTI9_5_IRQn);
 	NVIC_EnableIRQ(EXTI15_10_IRQn);
+	EXTI->PR |= 0x7F; //Clear all pending bits.
 }
 
 void TIM7_IRQHandler(void)
@@ -198,16 +199,23 @@ void TIM7_IRQHandler(void)
 	if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
   {
     TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
-  
+
     MoveOneStep();
   }
 }  
 //PA5 and PA8
 void EXTI9_5_IRQHandler(void)
 {
+	EXTI->PR |= 0x7F; //Clear all pending bits.
+	EXTI_ClearITPendingBit(EXTI_Line5);
+	EXTI_ClearITPendingBit(EXTI_Line8);
+	
+	NVIC_ClearPendingIRQ(EXTI9_5_IRQn);
+	
 	NVIC_DisableIRQ(EXTI9_5_IRQn); // Disable interrupt
 	__DSB();
 	__ISB(); 
+	
 	StartDebounceTimer();
 	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_5)) == 0)
 	{
@@ -224,14 +232,21 @@ void EXTI9_5_IRQHandler(void)
 		PBHandlerPB3Pressed();
 		//EXTI_ClearITPendingBit(EXTI_Line8);
 	}
-	NVIC_ClearPendingIRQ(EXTI9_5_IRQn);
+	
 	//NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
   
 //PA10
 void EXTI15_10_IRQHandler(void)
 {
-thing++;
+	EXTI->PR |= 0x7F; //Clear all pending bits.
+	EXTI_ClearITPendingBit(EXTI_Line10);
+	EXTI_ClearITPendingBit(EXTI_Line12);
+	EXTI_ClearITPendingBit(EXTI_Line14);
+	EXTI_ClearITPendingBit(EXTI_Line15);
+	NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
+
+	thing++;
 	NVIC_DisableIRQ(EXTI15_10_IRQn); // Disable interrupt
 	__DSB();
 	__ISB();
@@ -248,6 +263,12 @@ thing++;
 	{
 		PBHandlerPB5Pressed();
 	}
+	
+	if ((GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_12)) == 0/*sm test &&
+			alarmState == 1*/)
+	{
+		PBHandlerPB6Pressed();
+	}
 		
 	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15)) == 0)
 	{
@@ -256,7 +277,7 @@ thing++;
 		PBHandlerPB1Pressed();
 		//EXTI_ClearITPendingBit(EXTI_Line15);
 	}
-  NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
+  
 	//NVIC_EnableIRQ(EXTI15_10_IRQn); // Disable interrupt
 }
 
@@ -270,11 +291,11 @@ void EXTI3_IRQnHandler(void)
 	
 	if ((GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_3)) == 0)
 	{
-		PBHandlerPB5Pressed();
+		PBHandlerPB6Pressed();
 	}
 
   NVIC_ClearPendingIRQ(EXTI3_IRQn);
-} */ 
+} */
   
 /**
   * @}

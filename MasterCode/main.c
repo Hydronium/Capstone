@@ -10,7 +10,7 @@
 #include "LCDHandler.h"
 #include "stm32f4_discovery_lcd.h"
 #include "ProgramButtonHandler.h"
-#include "AlarmHandler.h"
+#include "ScheduleHandler.h"
 #include "VisualAlertsHandler.h"
 #include "Types.h"
 #include "StepperMotorHandler.h"
@@ -18,7 +18,7 @@
   
 char RTCInterrupt = 0;
 char timerInterrupt = 0; 
-  
+char alarmState = 0;
 
 
 
@@ -39,7 +39,7 @@ int main(void)
 	int recentlySavedDispenseCycle = 0;
 	
 	int scheduleState = 0;
-	int alarmState = 0;
+	//int alarmState = 0;
 	int alarmMinute = 0;
 	
 	char test[10];
@@ -107,7 +107,7 @@ int main(void)
 				{
 					minute++;
 
-					if (minute >= 60)
+					if (minute >= 5)
 					{
 						minute = 0;
 					}
@@ -188,23 +188,33 @@ int main(void)
 				LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
 				ActivateVisualAlert();
 				//ActivateAudioAlert
-				MoveOneSection();
+				//MoveOneSection();
 				alarmMinute = currentTime.minute;
 			}
 			alarmState = 1;
 		}
-
+		
+		//SM test
+		if (PBHandlerUserPressedDispenseButton() == 1)
+			{
+				MoveOneSection();
+			}
+			
 		if (alarmState == 1)
 		{
 			if (currentTime.second == 5)//if (currentTime.minute >= alarmMinute + 20)
 			{
 				DeactivateVisualAlert();
 				LCDDisplayText(3, 0, "                    ");
+				LCDDisplayText(4, 0, "        ");
 				alarmState = 0;
 			}
 			
-			//if dispense button pressed
-			//turn off alarm/reset things/dispense pill
+			if (PBHandlerUserPressedDispenseButton() == 1)
+			{
+				//turn off alarm/reset things/dispense pill
+				LCDDisplayText(4, 0, "Dispense");
+			}
 		}	
 	}
 }
