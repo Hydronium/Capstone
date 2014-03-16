@@ -37,7 +37,9 @@ int CheckAlarm(structTime time)
 				 (savedSchedule[xx].savedScheduleHour == time.hour) 		&&
 				 (savedSchedule[xx].savedScheduleMinute == time.minute)	&&
 				 (time.second < 5))
+		{
 			alarmValue = ALARM_EXISTS;
+		}
 	}
 	return alarmValue;
 }
