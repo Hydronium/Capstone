@@ -14,7 +14,7 @@
 #include "VisualAlertsHandler.h"
 #include "Types.h"
 #include "StepperMotorHandler.h"
-
+#include "MemoryHandler.h"
   
 char RTCInterrupt = 0;
 char timerInterrupt = 0; 
@@ -25,6 +25,7 @@ char alarmState = 0;
 structTime currentTime;
 int main(void)
 {
+	structSchedule test_sched = {0,0,0};
 	int init1 = 0;
 	int init2 = 0;
 		
@@ -53,7 +54,18 @@ int main(void)
 	LCDDisplayText(0, 0, test);
 	sprintf(test, "%0.2d:%0.2d:%0.2d", currentTime.hour, currentTime.minute, currentTime.second);
 	LCDDisplayText(1, 0, test);
-  
+	
+	SaveSchedule();
+	ReadStoredScheduleIntoMemory(10);
+	
+	
+	
+	LookAtSpecificCycle(&test_sched, 10);
+	
+	sprintf(test, "%0.2d:%0.2d:%0.2d", test_sched.savedScheduleDay, test_sched.savedScheduleHour, test_sched.savedScheduleMinute);
+	LCDDisplayText(4, 0, test);
+	while (1){}; //test dummy loop
+  /* commented out for testing
   while (1)
 	{
 
@@ -217,4 +229,5 @@ int main(void)
 			}
 		}	
 	}
+*/
 }

@@ -8,6 +8,23 @@ int savedScheduleMinute[DISPENSE_CYCLES] = {999};	*/
 
 structSchedule savedSchedule[DISPENSE_CYCLES] = {0};
 
+void SaveSchedule(void)
+{
+	FlashWriteSchedule(savedSchedule);
+}
+
+void ReadStoredScheduleIntoMemory(int cycle)
+{
+	FlashReadSchedule(savedSchedule, cycle);
+}
+
+void LookAtSpecificCycle(structSchedule * schedule, int cycle)
+{
+	schedule->savedScheduleDay = savedSchedule[cycle].savedScheduleDay;
+	schedule->savedScheduleHour = savedSchedule[cycle].savedScheduleHour;
+	schedule->savedScheduleMinute = savedSchedule[cycle].savedScheduleMinute;
+}
+
 void ScheduleInit(void)
 {
 	int xx;
@@ -43,15 +60,3 @@ int CheckAlarm(structTime time)
 	}
 	return alarmValue;
 }
-/*Commented Feb25
-int CheckAlarm(int currDay, int currHour, int currMinute, int alarmDay, int alarmHour, int alarmMinute, int alarmSecond)
-{
-	
-	if (alarmDay == currDay && alarmHour == currHour && alarmMinute == currMinute && alarmSecond == 0)
-	{
-		return 1;
-	}
-	
-	return 0;
-}
-*/

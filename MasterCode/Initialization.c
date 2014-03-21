@@ -18,4 +18,5 @@ void Initialization()
 	VisualAlertsInit();
 	ScheduleInit();
 	StepperMotorInit();
+	MemoryInit();
 }
