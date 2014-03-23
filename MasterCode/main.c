@@ -15,7 +15,8 @@
 #include "Types.h"
 #include "StepperMotorHandler.h"
 #include "MemoryHandler.h"
-  
+#include "AudioAlertsHandler.h"
+
 char RTCInterrupt = 0;
 char timerInterrupt = 0; 
 char alarmState = 0;
@@ -54,7 +55,7 @@ int main(void)
 	LCDDisplayText(0, 0, test);
 	sprintf(test, "%0.2d:%0.2d:%0.2d", currentTime.hour, currentTime.minute, currentTime.second);
 	LCDDisplayText(1, 0, test);
-	
+	/*
 	SaveSchedule();
 	ReadStoredScheduleIntoMemory(10);
 	
@@ -65,7 +66,9 @@ int main(void)
 	sprintf(test, "%0.2d:%0.2d:%0.2d", test_sched.savedScheduleDay, test_sched.savedScheduleHour, test_sched.savedScheduleMinute);
 	LCDDisplayText(4, 0, test);
 	while (1){}; //test dummy loop
-  /* commented out for testing
+  // commented out for testing
+	*/
+	
   while (1)
 	{
 
@@ -180,6 +183,14 @@ int main(void)
 			}
 		}
 
+		if (currentTime.second == 50)
+		{
+			if (CheckCartridgeSetupTime(currentTime) == ALARM_EXISTS)
+			{
+				MoveOneSection();
+			}
+		}
+		
 		sprintf(test, "%d", currentTime.day);
 		LCDDisplayText(0, 0, test);
 		sprintf(test, "%0.2d:%0.2d:%0.2d", currentTime.hour, currentTime.minute, currentTime.second);
@@ -199,7 +210,7 @@ int main(void)
 			{
 				LCDDisplayText(3, 0, "ALARM: ACTIVATE!");
 				ActivateVisualAlert();
-				//ActivateAudioAlert
+				ActivateAudioAlert();
 				//MoveOneSection();
 				alarmMinute = currentTime.minute;
 			}
@@ -207,16 +218,17 @@ int main(void)
 		}
 		
 		//SM test
-		if (PBHandlerUserPressedDispenseButton() == 1)
-			{
-				MoveOneSection();
-			}
+		//if (PBHandlerUserPressedDispenseButton() == 1)
+		//{
+		//	MoveOneSection();
+		//}
 			
 		if (alarmState == 1)
 		{
-			if (currentTime.second == 5)//if (currentTime.minute >= alarmMinute + 20)
+			if (currentTime.second >= 10)//if (currentTime.minute >= alarmMinute + 20)
 			{
 				DeactivateVisualAlert();
+				DeactivateAudioAlert();
 				LCDDisplayText(3, 0, "                    ");
 				LCDDisplayText(4, 0, "        ");
 				alarmState = 0;
@@ -226,8 +238,14 @@ int main(void)
 			{
 				//turn off alarm/reset things/dispense pill
 				LCDDisplayText(4, 0, "Dispense");
+				DeactivateVisualAlert();
+				DeactivateAudioAlert();
+				MoveOneSection();
+				LCDDisplayText(3, 0, "                    ");
+				LCDDisplayText(4, 0, "        ");
+				alarmState = 0;
 			}
 		}	
 	}
-*/
+
 }

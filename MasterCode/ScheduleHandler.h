@@ -16,6 +16,8 @@ void ScheduleInit(void);
 
 int CheckAlarm(structTime time);
 
+int CheckCartridgeSetupTime(structTime time);
+
 void SetScheduledAlarms(int day, int hour, int minute, int dispenseCycle);
 
 #endif

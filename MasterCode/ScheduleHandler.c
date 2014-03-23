@@ -53,7 +53,37 @@ int CheckAlarm(structTime time)
 		if ( (savedSchedule[xx].savedScheduleDay == time.day) 			&&
 				 (savedSchedule[xx].savedScheduleHour == time.hour) 		&&
 				 (savedSchedule[xx].savedScheduleMinute == time.minute)	&&
-				 (time.second < 5))
+				 (time.second == 0))
+		{
+			alarmValue = ALARM_EXISTS;
+		}
+	}
+	return alarmValue;
+}
+
+int CheckCartridgeSetupTime(structTime time)
+{
+	int xx;
+	int alarmValue = ALARM_NOT_EXISTS;
+	
+	
+	time.minute = (time.minute + 1) % 60;
+	if (time.minute == 0)
+	{
+		time.hour = (time.hour + 1) % 24;
+		if (time.hour == 0)
+		{
+			time.day = (time.day + 1) % 7;
+		}
+	}
+	time.second = 0;
+	
+	for (xx = 0; xx <= DISPENSE_CYCLES; xx++)
+	{
+		if ( (savedSchedule[xx].savedScheduleDay == time.day) 			&&
+				 (savedSchedule[xx].savedScheduleHour == time.hour) 		&&
+				 (savedSchedule[xx].savedScheduleMinute == time.minute)	&&
+				 (time.second == 0))
 		{
 			alarmValue = ALARM_EXISTS;
 		}

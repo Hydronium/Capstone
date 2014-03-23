@@ -89,7 +89,7 @@ void MoveOneStep(void)
 	}
 	movements++;
 	
-	if (movements >= 7 + change)
+	if (movements >= 300 + change)
 	{
 		movements = (timing + 1)%4;
 		change = movements;

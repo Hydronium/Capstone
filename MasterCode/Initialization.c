@@ -8,6 +8,7 @@
 #include "VisualAlertsHandler.h"
 #include "ScheduleHandler.h"
 #include "StepperMotorHandler.h"
+#include "AudioAlertsHandler.h"
 
 void Initialization()
 {
@@ -16,6 +17,7 @@ void Initialization()
 	TimerInit();
 	PBHandlerInit();
 	VisualAlertsInit();
+	AudioAlertsInit();
 	ScheduleInit();
 	StepperMotorInit();
 	MemoryInit();

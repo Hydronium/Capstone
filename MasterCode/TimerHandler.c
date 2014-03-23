@@ -54,9 +54,9 @@ void TimerInit(void)
 	/* Stepper Motor Timer */
 	RCC->APB1ENR |= RCC_APB1ENR_TIM7EN; //Enable TIM7 clock
 	
-	/* 25ms timer */
+	/* 10ms timer */
 	TIM7->PSC = 35999; // Set prescaler value
-	TIM7->ARR = 49; // Set auto-reload value
+	TIM7->ARR = 19; // Set auto-reload value
 	
 	TIM7->CR1 &= ~TIM_CR1_OPM; // NOT One pulse mode 
 
